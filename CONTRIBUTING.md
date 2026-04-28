@@ -4,6 +4,19 @@
 
 ---
 
+## 👥 ทีมงาน
+
+| คนที่ | บทบาท | ไฟล์ที่รับผิดชอบ | Branch |
+|--------|--------|-----------------|--------|
+| 1 | **Lead** (Core & Integration) | `main.c` + ทุก `.h` | `main`, `develop` |
+| 2 | **Lexer Developer** | `lexer.c` | `feature/lexer` |
+| 3 | **Parser Developer** | `parser.c` | `feature/parser` |
+| 4 | **Environment Developer** | `env.c` | `feature/environment` |
+| 5 | **Evaluator Developer** | `eval.c` | `feature/evaluator` |
+| 6 | **Testing Developer** | `examples/tests/*.cpe` | `feature/testing` |
+
+---
+
 ## 📋 สิ่งที่ต้องทำก่อนเริ่ม
 
 1. **Clone repo:**
@@ -30,11 +43,11 @@
 ```
 main (protected — release only)
  └── develop (protected — integration branch)
-      ├── feature/lexer        ← Lexer Developer
-      ├── feature/parser       ← Parser Developer
-      ├── feature/environment  ← Environment Developer
-      ├── feature/evaluator    ← Evaluator Developer
-      └── feature/docs-testing ← Docs & Testing Developer
+      ├── feature/lexer        ← เพื่อนคนที่ 1
+      ├── feature/parser       ← เพื่อนคนที่ 2
+      ├── feature/environment  ← เพื่อนคนที่ 3
+      ├── feature/evaluator    ← เพื่อนคนที่ 4
+      └── feature/testing      ← เพื่อนคนที่ 5
 ```
 
 **กฎ:**
@@ -63,8 +76,7 @@ main (protected — release only)
 ```
 feat(lexer): implement keyword table for action syntax
 fix(env): fix memory leak in separate chaining cleanup
-docs(readme): add compilation instructions for Windows
-test(examples): add nested while loop edge case
+test(tests): add nested while loop edge case
 ```
 
 ---
@@ -73,12 +85,12 @@ test(examples): add nested while loop edge case
 
 | สมาชิก | แก้ไขได้ | ห้ามแตะ |
 |---------|----------|---------|
-| Lead (Core) | `main.c`, ทุก `.h` | — |
+| Lead | `main.c`, ทุก `.h` | — |
 | Lexer Dev | `lexer.c` | `parser.*`, `env.*`, `eval.*`, `main.c` |
 | Parser Dev | `parser.c` | `lexer.*`, `env.*`, `eval.*`, `main.c` |
 | Environment Dev | `env.c` | `lexer.*`, `parser.*`, `eval.*`, `main.c` |
 | Evaluator Dev | `eval.c` | `lexer.*`, `parser.*`, `env.*`, `main.c` |
-| Docs/Test Dev | `.md`, `examples/`, `.vscode/`, CI | `src/*.c`, `src/*.h` |
+| Testing Dev | `examples/tests/*.cpe` | `src/*` |
 
 > ⚠️ **ห้ามแก้ไข `.h` files!** Header files ถูก freeze โดย Lead เป็น Interface Contract ถ้าต้องการเปลี่ยน → แจ้ง Lead ก่อนเท่านั้น
 
@@ -95,13 +107,18 @@ git merge develop
 ```
 
 ### 2. ทดสอบก่อน push
-```bash
-# Compile
-gcc -Wall -Wextra src/main.c src/lexer.c src/parser.c src/env.c src/eval.c -o build/cpelang.exe
 
-# Test
-./build/cpelang.exe examples/demo.cpe
-./build/cpelang.exe examples/demo2.cpe
+**สำหรับ C Developer (เพื่อนคนที่ 1-4):**
+```bash
+gcc -Wall -Wextra src/main.c src/lexer.c src/parser.c src/env.c src/eval.c -o build/cpelang.exe
+```
+
+**สำหรับ Testing Developer (เพื่อนคนที่ 5):**
+```bash
+# ทดสอบได้หลังจากโมดูลอื่นๆ merge แล้ว
+./build/cpelang.exe examples/tests/edge_nested_if.cpe
+./build/cpelang.exe examples/tests/edge_nested_while.cpe
+# ... etc
 ```
 
 ### 3. Push และสร้าง PR
@@ -117,11 +134,6 @@ git push origin feature/<your-branch>
 - แนบ output ผลทดสอบ
 
 ### 5. รอ Lead Review
-Lead จะตรวจสอบ:
-- File scope ถูกต้องไหม
-- API ตรงกับ `.h` ไหม
-- Compile + test ผ่านไหม
-- Memory management ถูกต้องไหม
 
 ---
 
@@ -132,7 +144,7 @@ Lead จะตรวจสอบ:
 examples/
 ├── demo.cpe              ← ฟีเจอร์หลักทั้งหมด
 ├── demo2.cpe             ← Collatz + ASCII Pyramid
-└── tests/
+└── tests/                ← Edge case tests (เพื่อนคนที่ 5 เขียน)
     ├── edge_empty.cpe         ← ไฟล์ว่าง
     ├── edge_comments_only.cpe ← มีแค่ comment
     ├── edge_nested_if.cpe     ← if ซ้อน if

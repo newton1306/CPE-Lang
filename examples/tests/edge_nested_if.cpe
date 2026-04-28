@@ -1,31 +1,29 @@
 // =============================================================================
-//  Edge Case: Nested If statements (if ซ้อน if หลายชั้น)
-//  Expected output:
-//    outer: true
-//    inner: true
-//    deepest: true
-//    else branch reached
+//  Test Case: Nested If Statements
 // =============================================================================
-
-set a as int to 10
-set b as int to 20
-set c as int to 30
-
-if a < b then
-    show "outer: true"
-    if b < c then
-        show "inner: true"
-        if c > 25 then
-            show "deepest: true"
-        end
-    end
-end
-
-// ทดสอบ nested if-else
-if a > 100 then
-    show "should not print"
-else
-    if b == 20 then
-        show "else branch reached"
-    end
-end
+//
+//  ผู้รับผิดชอบ: [Testing Developer]
+//  Branch: feature/testing
+//
+//  📋 Requirement:
+//  - ทดสอบ if ซ้อน if หลายชั้น (อย่างน้อย 3 ชั้น)
+//  - ทดสอบ if-else ซ้อนใน else block
+//  - ตรวจสอบว่า condition ทำงานถูกต้องทุกชั้น
+//  - ทดสอบทั้ง truthy path และ falsy path
+//
+//  🎯 Expected Output:
+//  (กำหนดเองตาม test case ที่เขียน — ต้องระบุ expected output ไว้ใน comment)
+//
+//  💡 Hint:
+//  - สร้างตัวแปร 3 ตัว เช่น a=10, b=20, c=30
+//  - ทดสอบ: if a < b then → if b < c then → if c > 25 then
+//  - ทดสอบ: if ที่ condition เป็น false → เข้า else → แล้วมี if อีกชั้นใน else
+//  - ใช้ show เพื่อยืนยันว่าเข้า branch ที่ถูกต้อง
+//
+//  สิ่งที่ต้องทดสอบ:
+//  ✅ if ซ้อน 3 ชั้น (condition เป็น true ทุกชั้น)
+//  ✅ if-else ที่ condition เป็น false → เข้า else → if อีกชั้น
+//  ✅ ทุก block ปิดด้วย end ถูกต้อง
+//
+//  TODO: เขียน test case ตามที่ระบุด้านบน
+// =============================================================================

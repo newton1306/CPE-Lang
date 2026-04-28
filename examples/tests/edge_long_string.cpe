@@ -1,15 +1,28 @@
 // =============================================================================
-//  Edge Case: Long string concatenation (ต่อ string ยาวๆ)
-//  Expected: ไม่ crash, แสดง string ยาวๆ
+//  Test Case: Long String Concatenation
 // =============================================================================
-
-set s as string to ""
-set count as int to 0
-
-while count < 20 do
-    set s to s + "abc"
-    set count to count + 1
-end
-
-show s
-show "length test passed"
+//
+//  ผู้รับผิดชอบ: [Testing Developer]
+//  Branch: feature/testing
+//
+//  📋 Requirement:
+//  - ทดสอบการต่อ string ด้วย + หลายครั้งติดต่อกัน
+//  - ทดสอบว่า memory ไม่ leak เมื่อต่อ string ซ้ำใน while loop
+//  - ทดสอบว่า string ผลลัพธ์ถูกต้อง (ความยาว + เนื้อหา)
+//
+//  🎯 Expected Output:
+//  (กำหนดเองตาม test case — แนะนำต่อ string สั้นๆ ซ้ำ 10-20 รอบ)
+//
+//  💡 Hint:
+//  - สร้าง string ว่าง: set s as string to ""
+//  - ใช้ while loop ต่อ string เช่น "abc" ซ้ำ 20 รอบ
+//  - show ผลลัพธ์ → ควรได้ "abcabcabc..." (20 ครั้ง)
+//  - ลอง concat ตัวแปร string กับ string literal ด้วย
+//
+//  สิ่งที่ต้องทดสอบ:
+//  ✅ string + string ใน loop ทำงานถูกต้อง
+//  ✅ ผลลัพธ์ string ยาวๆ แสดงผลถูกต้อง
+//  ✅ ไม่ crash จากการ concat หลายรอบ
+//
+//  TODO: เขียน test case ตามที่ระบุด้านบน
+// =============================================================================

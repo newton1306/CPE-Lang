@@ -1,32 +1,35 @@
 // =============================================================================
-//  Edge Case: Arithmetic edge cases (การคำนวณกรณีพิเศษ)
-//  Expected output:
-//    0
-//    0
-//    -5
-//    100
-//    1
-//    complex passed
+//  Test Case: Arithmetic Edge Cases
 // =============================================================================
-
-// ศูนย์
-set zero as int to 0
-show zero
-
-// คูณด้วยศูนย์
-set result as int to 42 * 0
-show result
-
-// ค่าลบ
-set neg as int to 0 - 5
-show neg
-
-// วงเล็บซ้อน
-set paren as int to (2 + 3) * (4 + 16)
-show paren
-
-// Operator precedence
-set prec as int to 2 + 3 * 4 - 13
-show prec
-
-show "complex passed"
+//
+//  ผู้รับผิดชอบ: [Testing Developer]
+//  Branch: feature/testing
+//
+//  📋 Requirement:
+//  - ทดสอบการคำนวณกรณีพิเศษต่างๆ
+//  - ทดสอบ operator precedence (ลำดับการคำนวณ)
+//  - ทดสอบการใช้วงเล็บ
+//  - ทดสอบค่าศูนย์ และค่าลบ (ถ้าได้จากการคำนวณ)
+//
+//  🎯 Expected Output:
+//  (กำหนดเองตาม test case — ต้องระบุ expected output ทุก show)
+//
+//  💡 Hint:
+//  - ค่าศูนย์: set zero as int to 0 → show zero → 0
+//  - คูณด้วยศูนย์: 42 * 0 → 0
+//  - ค่าลบจากการลบ: 0 - 5 → -5
+//  - วงเล็บ: (2 + 3) * (4 + 16) → 100
+//  - Precedence: 2 + 3 * 4 → 14 (ไม่ใช่ 20)
+//  - Precedence: 2 + 3 * 4 - 13 → 1
+//  - เปรียบเทียบ: 10 > 5 → 1 (true), 3 > 7 → 0 (false)
+//
+//  สิ่งที่ต้องทดสอบ:
+//  ✅ ค่าศูนย์ทำงานถูกต้อง
+//  ✅ คูณ/หารด้วยศูนย์
+//  ✅ ค่าลบ (จากการลบ)
+//  ✅ วงเล็บซ้อน
+//  ✅ Operator precedence: * / ก่อน + -
+//  ✅ Operator precedence: + - ก่อน > < ==
+//
+//  TODO: เขียน test case ตามที่ระบุด้านบน
+// =============================================================================
