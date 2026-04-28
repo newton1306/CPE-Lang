@@ -18,11 +18,11 @@
 
 | ไฟล์ในโฟลเดอร์นี้ | สำหรับใคร | งานอะไร |
 |-------------------|-----------|---------|
-| [FRIEND_1_LEXER.md](./FRIEND_1_LEXER.md) | เพื่อนคนที่ 1 | เขียน `src/lexer.c` |
-| [FRIEND_2_PARSER.md](./FRIEND_2_PARSER.md) | เพื่อนคนที่ 2 | เขียน `src/parser.c` |
-| [FRIEND_3_ENVIRONMENT.md](./FRIEND_3_ENVIRONMENT.md) | เพื่อนคนที่ 3 | เขียน `src/env.c` |
-| [FRIEND_4_EVALUATOR.md](./FRIEND_4_EVALUATOR.md) | เพื่อนคนที่ 4 | เขียน `src/eval.c` |
-| [FRIEND_5_TESTING.md](./FRIEND_5_TESTING.md) | เพื่อนคนที่ 5 | เขียน `examples/tests/*.cpe` |
+| [1_SHOGUN_LEXER.md](./1_SHOGUN_LEXER.md) | SHOGUN | เขียน `src/lexer.c` |
+| [2_IKKIW_PARSER.md](./2_IKKIW_PARSER.md) | IKKIW | เขียน `src/parser.c` |
+| [3_JEEFOON_ENVIRONMENT.md](./3_JEEFOON_ENVIRONMENT.md) | JEEFOON | เขียน `src/env.c` |
+| [4_GEAR_EVALUATOR.md](./4_GEAR_EVALUATOR.md) | GEAR | เขียน `src/eval.c` |
+| [5_NORTH_TESTING.md](./5_NORTH_TESTING.md) | NORTH | เขียน `examples/tests/*.cpe` |
 
 ---
 
@@ -65,6 +65,7 @@ git checkout -b feature/<ชื่อ branch ของตัวเอง>
 | Testing Developer | `feature/testing` |
 
 **ตัวอย่าง** (ถ้าคุณเป็น Lexer Developer):
+
 ```bash
 git checkout develop
 git checkout -b feature/lexer
@@ -96,10 +97,13 @@ git commit -m "feat(lexer): implement lexer_tokenize function"
 ```
 
 > 💡 **Commit message** ต้องเป็นรูปแบบนี้:
+>
 > ```
 > <type>(<module>): <อธิบายว่าทำอะไร>
 > ```
+>
 > ตัวอย่าง:
+>
 > - `feat(lexer): implement keyword table matching`
 > - `feat(parser): add recursive descent for if-else`
 > - `feat(env): implement hash table with djb2`
@@ -115,11 +119,13 @@ git push origin feature/<ชื่อ branch ของตัวเอง>
 ```
 
 **ตัวอย่าง** (ถ้าคุณเป็น Lexer Developer):
+
 ```bash
 git push origin feature/lexer
 ```
 
 ถ้าเป็นครั้งแรกอาจต้องตั้ง upstream:
+
 ```bash
 git push -u origin feature/lexer
 ```
