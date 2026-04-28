@@ -1,0 +1,15 @@
+// =============================================================================
+//  Edge Case: Long string concatenation (ต่อ string ยาวๆ)
+//  Expected: ไม่ crash, แสดง string ยาวๆ
+// =============================================================================
+
+set s as string to ""
+set count as int to 0
+
+while count < 20 do
+    set s to s + "abc"
+    set count to count + 1
+end
+
+show s
+show "length test passed"

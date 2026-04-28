@@ -1,0 +1,31 @@
+// =============================================================================
+//  Edge Case: Nested If statements (if ซ้อน if หลายชั้น)
+//  Expected output:
+//    outer: true
+//    inner: true
+//    deepest: true
+//    else branch reached
+// =============================================================================
+
+set a as int to 10
+set b as int to 20
+set c as int to 30
+
+if a < b then
+    show "outer: true"
+    if b < c then
+        show "inner: true"
+        if c > 25 then
+            show "deepest: true"
+        end
+    end
+end
+
+// ทดสอบ nested if-else
+if a > 100 then
+    show "should not print"
+else
+    if b == 20 then
+        show "else branch reached"
+    end
+end

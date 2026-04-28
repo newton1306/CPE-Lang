@@ -1,0 +1,81 @@
+// =============================================================================
+//  CPE Language v1.0 - Demo Program (Action/Conversational Syntax)
+//  ไฟล์ตัวอย่างที่สาธิตฟีเจอร์ทั้งหมดของภาษา CPE
+// =============================================================================
+
+// --- 1. Variable Declaration (การประกาศตัวแปร) ---
+set x as int to 10
+set y as int to 20
+set greeting as string to "NMONNNN"
+
+// --- 2. Show (การแสดงผล) ---
+show greeting
+show x
+show y
+
+// --- 3. Arithmetic (การคำนวณทางคณิตศาสตร์) ---
+set sum as int to x + y
+set diff as int to y - x
+set product as int to x * y
+set quotient as int to y / x
+
+show "--- Arithmetic Results ---"
+show sum
+show diff
+show product
+show quotient
+
+// --- 4. String Concatenation (การต่อสตริง) ---
+set first_name as string to "CPE"
+set last_name as string to " Language"
+set full_name as string to first_name + last_name
+show full_name
+
+// --- 5. If-Else (เงื่อนไข) ---
+show "--- If-Else Demo ---"
+
+if x < y then
+    show "x is less than y"
+end
+
+if x > 100 then
+    show "x is greater than 100"
+else
+    show "x is NOT greater than 100"
+end
+
+set a as int to 42
+set b as int to 42
+
+if a == b then
+    show "a equals b"
+else
+    show "a does not equal b"
+end
+
+// --- 6. While Loop (วนรอบ) ---
+show "--- While Loop: Countdown ---"
+set counter as int to 5
+
+while counter > 0 do
+    show counter
+    set counter to counter - 1
+end
+
+show "Liftoff!"
+
+// --- 7. Complex Example: Fibonacci-like sum ---
+show "--- Fibonacci-like Sum ---"
+set fib_a as int to 0
+set fib_b as int to 1
+set fib_count as int to 0
+
+while fib_count < 10 do
+    show fib_b
+    set temp as int to fib_b
+    set fib_b to fib_a + fib_b
+    set fib_a to temp
+    set fib_count to fib_count + 1
+end
+
+show "--- Program Complete ---"

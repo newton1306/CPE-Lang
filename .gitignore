@@ -1,0 +1,26 @@
+# =============================================================================
+#  CPE Language — .gitignore
+# =============================================================================
+
+# Build artifacts
+build/
+*.exe
+*.o
+*.obj
+*.out
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files (ยกเว้น .vscode ที่ share กัน)
+*.swp
+*.swo
+*~
+.idea/
+
+# Temporary files
+*.tmp
+*.log
+output.txt

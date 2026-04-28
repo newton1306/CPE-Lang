@@ -1,0 +1,10 @@
+// =============================================================================
+//  Edge Case: Comments only (ไฟล์มีแค่ comment)
+//  Expected: ไม่ crash, ไม่มี output
+// =============================================================================
+
+// This file has only comments
+// No actual code here
+// Should produce no output
+
+// End of file

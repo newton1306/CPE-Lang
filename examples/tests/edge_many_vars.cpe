@@ -1,0 +1,37 @@
+// =============================================================================
+//  Edge Case: Many variables (ตัวแปรจำนวนมาก → ทดสอบ hash collision)
+//  Expected: แสดงค่าตัวแปรทั้งหมดถูกต้อง
+// =============================================================================
+
+set a as int to 1
+set b as int to 2
+set c as int to 3
+set d as int to 4
+set e as int to 5
+set f as int to 6
+set g as int to 7
+set h as int to 8
+set i as int to 9
+set j as int to 10
+set k as int to 11
+set l as int to 12
+set m as int to 13
+set n as int to 14
+set o as int to 15
+set p as int to 16
+set q as int to 17
+set r as int to 18
+set s as int to 19
+set t as int to 20
+
+// ทดสอบว่าอ่านค่ากลับมาได้ถูกต้อง
+set total as int to a + b + c + d + e + f + g + h + i + j
+set total2 as int to k + l + m + n + o + p + q + r + s + t
+
+show total
+show total2
+
+// Expected: total = 55, total2 = 155
+set grand_total as int to total + total2
+show grand_total
+// Expected: grand_total = 210

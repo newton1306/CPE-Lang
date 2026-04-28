@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build CPE Interpreter",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-o",
+                "${workspaceFolder}/build/cpelang.exe",
+                "${workspaceFolder}/src/main.c",
+                "${workspaceFolder}/src/lexer.c",
+                "${workspaceFolder}/src/parser.c",
+                "${workspaceFolder}/src/env.c",
+                "${workspaceFolder}/src/eval.c"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Compile all CPE source files into build/cpelang.exe using GCC (C11 standard)"
+        },
+        {
+            "label": "Build & Run CPE (current file)",
+            "dependsOn": "Build CPE Interpreter",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/cpelang.exe",
+            "args": [
+                "${file}"
+            ],
+            "group": "test",
+            "problemMatcher": [],
+            "detail": "Build the interpreter and then run the currently open .cpe file"
+        }
+    ]
+}

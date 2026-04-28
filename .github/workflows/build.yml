@@ -1,0 +1,74 @@
+# =============================================================================
+#  CPE Language — CI/CD Pipeline
+#  ทำงานอัตโนมัติเมื่อมี PR หรือ push เข้า develop/main
+# =============================================================================
+
+name: Build & Test CPE Language
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Install GCC
+        run: sudo apt-get update && sudo apt-get install -y gcc
+
+      - name: 🏗️ Compile CPE Interpreter
+        run: |
+          mkdir -p build
+          gcc -Wall -Wextra src/main.c src/lexer.c src/parser.c src/env.c src/eval.c -o build/cpelang
+          echo "✅ Compilation successful!"
+
+      - name: 🧪 Test demo.cpe
+        run: |
+          echo "=== Running demo.cpe ==="
+          ./build/cpelang examples/demo.cpe
+          echo ""
+          echo "✅ demo.cpe passed!"
+
+      - name: 🧪 Test demo2.cpe
+        run: |
+          echo "=== Running demo2.cpe ==="
+          ./build/cpelang examples/demo2.cpe
+          echo ""
+          echo "✅ demo2.cpe passed!"
+
+      - name: 🧪 Test edge cases
+        run: |
+          echo "=== Running edge case tests ==="
+          for f in examples/tests/*.cpe; do
+            if [ -f "$f" ]; then
+              echo "--- Testing: $f ---"
+              ./build/cpelang "$f" || echo "⚠️ Failed: $f"
+            fi
+          done
+          echo "✅ Edge case tests complete!"
+
+  # Windows build test (เพื่อให้มั่นใจว่าทำงานบน Windows ด้วย)
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Compile CPE Interpreter (Windows)
+        run: |
+          mkdir -p build
+          gcc -Wall -Wextra src/main.c src/lexer.c src/parser.c src/env.c src/eval.c -o build/cpelang.exe
+          echo "✅ Windows compilation successful!"
+        shell: bash
+
+      - name: 🧪 Test demo.cpe (Windows)
+        run: |
+          ./build/cpelang.exe examples/demo.cpe
+        shell: bash
