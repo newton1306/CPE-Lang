@@ -9,7 +9,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 
 | คนที่ | บทบาท | ไฟล์ที่รับผิดชอบ | Branch |
 |--------|--------|-----------------|--------|
-| 1 (คุณ) | **Lead** | `main.c` + ทุก `.h` + integration | `main`, `develop` |
+| 1 | **Lead** | `main.c` + ทุก `.h` + integration | `main`, `develop` |
 | 2 | **Lexer Developer** | `lexer.c` | `feature/lexer` |
 | 3 | **Parser Developer** | `parser.c` | `feature/parser` |
 | 4 | **Environment Developer** | `env.c` | `feature/environment` |
@@ -25,6 +25,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 **Branch:** `main`, `develop`
 
 ### 📝 สิ่งที่ต้องทำ
+
 - [ ] สร้าง GitHub Repository
 - [ ] Push initial commit (โค้ดปัจจุบันทั้งหมด รวม skeleton files)
 - [ ] สร้าง `develop` branch จาก `main`
@@ -36,6 +37,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 - [ ] Release: merge develop → main, tag v1.0
 
 ### 🔗 Dependencies
+
 ไม่มี — ทำก่อนทุกคน
 
 ---
@@ -47,6 +49,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 **Branch:** `feature/lexer`
 
 ### 📝 สิ่งที่ต้องทำ
+
 - [ ] Implement `token_list_create()` — สร้าง TokenList ว่าง
 - [ ] Implement `token_list_append()` — เพิ่ม token ต่อท้าย (O(1) ด้วย tail pointer)
 - [ ] Implement `token_list_free()` — ทำลาย Linked List คืน memory
@@ -62,10 +65,12 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
   - [ ] ปิดท้ายด้วย `TOKEN_EOF`
 
 ### ✅ Definition of Done
+
 - [ ] Compile ผ่าน: `gcc -Wall -Wextra src/*.c -o build/cpelang.exe`
 - [ ] ส่ง PR → Lead review ผ่าน
 
 ### 🔗 Dependencies
+
 ❌ ไม่มี — ทำได้ทันที
 
 ---
@@ -77,6 +82,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 **Branch:** `feature/parser`
 
 ### 📝 สิ่งที่ต้องทำ
+
 - [ ] Implement `ast_node_create()` — สร้าง AST node ใหม่
 - [ ] Implement `ast_node_add_child()` — เพิ่ม child เข้า parent
 - [ ] Implement `ast_node_free()` — ทำลาย AST tree แบบ recursive
@@ -94,10 +100,12 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
   - [ ] `parse_primary()` — INT_LIT, STRING_LIT, IDENT, `(expr)`
 
 ### ✅ Definition of Done
+
 - [ ] Compile ผ่าน: `gcc -Wall -Wextra src/*.c -o build/cpelang.exe`
 - [ ] ส่ง PR → Lead review ผ่าน
 
 ### 🔗 Dependencies
+
 ✅ ต้องรอ `lexer.h` (TokenType enum) — **แต่ `.h` ถูก freeze แล้ว เริ่มทำได้เลย**
 
 ---
@@ -109,6 +117,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 **Branch:** `feature/environment`
 
 ### 📝 สิ่งที่ต้องทำ
+
 - [ ] Implement djb2 hash function
 - [ ] Implement `env_create()` — สร้าง Env ใหม่ (64 buckets, parent pointer)
 - [ ] Implement `env_destroy()` — ทำลาย Hash Table คืน memory
@@ -119,10 +128,12 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 - [ ] Implement `value_free()` — คืน memory ของ string value
 
 ### ✅ Definition of Done
+
 - [ ] Compile ผ่าน: `gcc -Wall -Wextra src/*.c -o build/cpelang.exe`
 - [ ] ส่ง PR → Lead review ผ่าน
 
 ### 🔗 Dependencies
+
 ❌ ไม่มี — ทำได้ทันที
 
 ---
@@ -134,6 +145,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 **Branch:** `feature/evaluator`
 
 ### 📝 สิ่งที่ต้องทำ
+
 - [ ] Implement `eval()` — main switch ตาม ASTNodeType
   - [ ] `AST_INT_LIT` → `atoi(node->value)` → `value_int()`
   - [ ] `AST_STRING_LIT` → `value_string(node->value)`
@@ -149,6 +161,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 - [ ] Handle string concatenation ด้วย `+`
 
 ### ⚠️ จุดที่ต้องระวัง
+
 ```c
 // ❌ ผิด: env_set ใน child scope → shadow ตัวแปร → while loop ไม่จบ
 env_set(child_env, "x", new_value);
@@ -159,11 +172,13 @@ Value *existing = env_get(env, "x");
 ```
 
 ### ✅ Definition of Done
+
 - [ ] Compile ผ่าน: `gcc -Wall -Wextra src/*.c -o build/cpelang.exe`
 - [ ] `demo.cpe` + `demo2.cpe` ได้ output ถูกต้อง
 - [ ] ส่ง PR → Lead review ผ่าน
 
 ### 🔗 Dependencies
+
 ✅ ต้องรอ `parser.h` + `env.h` — **แต่ `.h` ถูก freeze แล้ว เริ่มทำได้เลย**
 
 ---
@@ -187,12 +202,14 @@ Value *existing = env_get(env, "x");
 - [ ] `edge_arithmetic.cpe` — ทดสอบการคำนวณกรณีพิเศษ (ศูนย์, ค่าลบ, วงเล็บ, precedence)
 
 **กฎสำคัญ:**
+
 - อ่าน requirement ที่เขียนไว้ใน comment ของแต่ละไฟล์
 - ทุกไฟล์ต้องระบุ **Expected Output** ไว้ใน comment
 - เขียนโค้ด CPE ตาม syntax ที่อยู่ใน `README.md`
 - ทดสอบได้ด้วย: `./build/cpelang.exe examples/tests/<filename>.cpe`
 
 **อ้างอิง Syntax:**
+
 ```
 set x as int to 10          // ประกาศตัวแปร int
 set s as string to "hello"  // ประกาศตัวแปร string
@@ -204,10 +221,12 @@ while x < 10 do ... end     // วนรอบ
 ```
 
 ### ✅ Definition of Done
+
 - [ ] ทุกไฟล์ test มีโค้ด CPE ที่ถูกต้อง (ไม่ใช่แค่ comment)
 - [ ] ทุกไฟล์ระบุ expected output ไว้ใน comment
 - [ ] ทุกไฟล์รันผ่าน interpreter ไม่ crash
 - [ ] ส่ง PR → Lead review ผ่าน
 
 ### 🔗 Dependencies
+
 ⚠️ ต้องรอให้โมดูลอื่นๆ merge เสร็จก่อนจึงจะ **รัน test จริง** ได้ — แต่**เขียน test ได้ทันที** (เพราะเป็นภาษา CPE ไม่ใช่ C)
