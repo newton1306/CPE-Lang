@@ -1,4 +1,4 @@
-# 🟤 คู่มือสำหรับเพื่อนคนที่ 5 — Testing Developer
+# 🟤 คู่มือสำหรับ NORTH — Testing Developer
 
 ## 📋 งานของคุณคือ: เขียน test cases ใน `examples/tests/*.cpe`
 
@@ -307,3 +307,60 @@ show "complex passed"
 - [ ] สร้าง PR → base: develop
 
 พร้อมส่ง PR! 🎉
+
+---
+
+## 🤖 ทางเลือกสุดท้าย — ใช้ AI ช่วย
+
+ถ้าทำเองไม่ไหวจริงๆ ให้ copy prompt ด้านล่างนี้ไปวางใน ChatGPT, Claude, Gemini หรือ AI ตัวไหนก็ได้:
+
+```
+ฉันกำลังเขียน test cases สำหรับภาษาโปรแกรมมิ่งที่ชื่อ CPE Language
+ภาษานี้มี syntax ดังนี้:
+
+- ประกาศตัวแปร: set x as int to 10
+- ประกาศ string: set name as string to "hello"
+- กำหนดค่าใหม่: set x to x + 1
+- แสดงผล: show x
+- เงื่อนไข: if x > 5 then ... end
+- เงื่อนไข+else: if x > 5 then ... else ... end
+- วนรอบ: while x < 10 do ... end
+- comment: // comment
+- operators: +, -, *, /, >, <, ==, (, )
+
+ตัวอย่างโปรแกรมจริง:
+
+[วางโค้ด examples/demo.cpe ทั้งไฟล์ที่นี่]
+
+ฉันต้องเขียน test cases 7 ไฟล์ แต่ละไฟล์มี requirement ระบุไว้ใน comment:
+
+=== ไฟล์ 1: edge_empty.cpe ===
+[วางเนื้อหา examples/tests/edge_empty.cpe ที่นี่]
+
+=== ไฟล์ 2: edge_comments_only.cpe ===
+[วางเนื้อหา examples/tests/edge_comments_only.cpe ที่นี่]
+
+=== ไฟล์ 3: edge_nested_if.cpe ===
+[วางเนื้อหา examples/tests/edge_nested_if.cpe ที่นี่]
+
+=== ไฟล์ 4: edge_nested_while.cpe ===
+[วางเนื้อหา examples/tests/edge_nested_while.cpe ที่นี่]
+
+=== ไฟล์ 5: edge_long_string.cpe ===
+[วางเนื้อหา examples/tests/edge_long_string.cpe ที่นี่]
+
+=== ไฟล์ 6: edge_many_vars.cpe ===
+[วางเนื้อหา examples/tests/edge_many_vars.cpe ที่นี่]
+
+=== ไฟล์ 7: edge_arithmetic.cpe ===
+[วางเนื้อหา examples/tests/edge_arithmetic.cpe ที่นี่]
+
+ช่วยเขียนโค้ดภาษา CPE สำหรับ test case ทั้ง 7 ไฟล์
+ตาม requirement ที่ระบุไว้ในแต่ละไฟล์
+
+กฎ:
+1. ทุกไฟล์ต้องมี Expected Output ระบุไว้ใน comment
+2. ใช้ syntax ภาษา CPE เท่านั้น (ไม่ใช่ C หรือ Python)
+3. ดูตัวอย่าง demo.cpe เป็นแนวทาง
+4. คืนโค้ดแยกทีละไฟล์ พร้อมบอกว่าแต่ละไฟล์ Expected Output คืออะไร
+```

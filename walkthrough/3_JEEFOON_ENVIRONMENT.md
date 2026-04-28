@@ -1,4 +1,4 @@
-# 🟢 คู่มือสำหรับเพื่อนคนที่ 3 — Environment Developer
+# 🟢 คู่มือสำหรับ JEEFOON — Environment Developer
 
 ## 📋 งานของคุณคือ: เขียน `src/env.c`
 
@@ -200,3 +200,44 @@ gcc -Wall -Wextra src/main.c src/lexer.c src/parser.c src/env.c src/eval.c -o bu
 ```
 
 ถ้า compile ผ่าน → พร้อมส่ง PR! 🎉
+
+---
+
+## 🤖 ทางเลือกสุดท้าย — ใช้ AI ช่วย
+
+ถ้าทำเองไม่ไหวจริงๆ ให้ copy prompt ด้านล่างนี้ไปวางใน ChatGPT, Claude, Gemini หรือ AI ตัวไหนก็ได้:
+
+```
+ฉันกำลังทำโปรเจกต์ CPE Language Interpreter เป็นภาษา C
+งานของฉันคือเขียนไฟล์ env.c ซึ่งเป็น Symbol Table (Hash Table + Scope Chain)
+
+หน้าที่ของ Environment:
+- เก็บตัวแปร (ชื่อ → ค่า) ด้วย Hash Table ที่มี 64 buckets
+- ใช้ djb2 hash function
+- Separate Chaining สำหรับ collision
+- Scope Chain ผ่าน parent pointer
+- สร้าง/ทำลาย Value (int หรือ string)
+
+นี่คือไฟล์ที่เกี่ยวข้อง (ห้ามแก้ไข):
+
+=== env.h (Interface ที่ต้อง implement ตาม) ===
+[วางโค้ด src/env.h ทั้งไฟล์ที่นี่]
+
+=== env.c (skeleton ที่ต้อง implement) ===
+[วางโค้ด src/env.c ทั้งไฟล์ที่นี่]
+
+ช่วย implement ทุก function ใน env.c ให้ครบตาม TODO ที่เขียนไว้
+โดยต้อง:
+1. ใช้ function signature ตรงตาม env.h (ห้ามเปลี่ยน)
+2. value_int() กับ value_string() เขียนเป็นตัวอย่างไว้แล้ว
+3. Implement:
+   - hash() — djb2: h = 5381, h = h * 33 + c, return h % 64
+   - value_free() — free string value
+   - env_create(parent) — malloc Env + ตั้ง 64 buckets เป็น NULL
+   - env_destroy(env) — free ทุก entry + free env (ไม่ทำลาย parent)
+   - env_set(env, name, value) — insert/update ใน scope ปัจจุบัน
+   - env_get(env, name) — ค้นหาตาม scope chain (recursive!)
+     ⚠️ ต้องคืน pointer (&entry->value) ไม่ใช่ copy!
+4. compile ได้ด้วย gcc -Wall -Wextra
+5. คืนเฉพาะโค้ดไฟล์ env.c เท่านั้น
+```

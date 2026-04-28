@@ -7,14 +7,14 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 
 ## การมอบหมายงาน
 
-| คนที่ | บทบาท | ไฟล์ที่รับผิดชอบ | Branch |
+| ชื่อ | บทบาท | ไฟล์ที่รับผิดชอบ | Branch |
 |--------|--------|-----------------|--------|
-| 1 | **Lead** | `main.c` + ทุก `.h` + integration | `main`, `develop` |
-| 2 | **Lexer Developer** | `lexer.c` | `feature/lexer` |
-| 3 | **Parser Developer** | `parser.c` | `feature/parser` |
-| 4 | **Environment Developer** | `env.c` | `feature/environment` |
-| 5 | **Evaluator Developer** | `eval.c` | `feature/evaluator` |
-| 6 | **Testing Developer** | `examples/tests/*.cpe` | `feature/testing` |
+| Lead | **Lead** (Core & Integration) | `main.c` + ทุก `.h` | `main`, `develop` |
+| SHOGUN | **Lexer Developer** | `lexer.c` | `feature/lexer` |
+| IKKIW | **Parser Developer** | `parser.c` | `feature/parser` |
+| JEEFOON | **Environment Developer** | `env.c` | `feature/environment` |
+| GEAR | **Evaluator Developer** | `eval.c` | `feature/evaluator` |
+| NORTH | **Testing Developer** | `examples/tests/*.cpe` | `feature/testing` |
 
 ---
 
@@ -44,7 +44,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 
 ## Issue #2: [Lexer] Implement lexer.c — Tokenizer
 
-**Assignee:** เพื่อนคนที่ 1
+**Assignee:** SHOGUN
 **Labels:** `feature`, `lexer`
 **Branch:** `feature/lexer`
 
@@ -77,7 +77,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 
 ## Issue #3: [Parser] Implement parser.c — AST Builder
 
-**Assignee:** เพื่อนคนที่ 2
+**Assignee:** IKKIW
 **Labels:** `feature`, `parser`
 **Branch:** `feature/parser`
 
@@ -112,7 +112,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 
 ## Issue #4: [Environment] Implement env.c — Symbol Table
 
-**Assignee:** เพื่อนคนที่ 3
+**Assignee:** JEEFOON
 **Labels:** `feature`, `environment`
 **Branch:** `feature/environment`
 
@@ -140,7 +140,7 @@ Lead ควรสร้าง 6 Issues ในวันแรกแล้ว assi
 
 ## Issue #5: [Evaluator] Implement eval.c — AST Executor
 
-**Assignee:** เพื่อนคนที่ 4
+**Assignee:** GEAR
 **Labels:** `feature`, `evaluator`
 **Branch:** `feature/evaluator`
 
@@ -185,7 +185,7 @@ Value *existing = env_get(env, "x");
 
 ## Issue #6: [Testing] เขียน Test Cases
 
-**Assignee:** เพื่อนคนที่ 5
+**Assignee:** NORTH
 **Labels:** `testing`
 **Branch:** `feature/testing`
 

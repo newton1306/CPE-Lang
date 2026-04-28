@@ -1,4 +1,4 @@
-# 🟣 คู่มือสำหรับเพื่อนคนที่ 2 — Parser Developer
+# 🟣 คู่มือสำหรับ IKKIW — Parser Developer
 
 ## 📋 งานของคุณคือ: เขียน `src/parser.c`
 
@@ -220,3 +220,50 @@ gcc -Wall -Wextra src/main.c src/lexer.c src/parser.c src/env.c src/eval.c -o bu
 ```
 
 ถ้า compile ผ่าน → พร้อมส่ง PR! 🎉
+
+---
+
+## 🤖 ทางเลือกสุดท้าย — ใช้ AI ช่วย
+
+ถ้าทำเองไม่ไหวจริงๆ ให้ copy prompt ด้านล่างนี้ไปวางใน ChatGPT, Claude, Gemini หรือ AI ตัวไหนก็ได้:
+
+```
+ฉันกำลังทำโปรเจกต์ CPE Language Interpreter เป็นภาษา C
+งานของฉันคือเขียนไฟล์ parser.c ซึ่งเป็นตัว AST Builder (Recursive Descent Parser)
+
+หน้าที่ของ Parser:
+- รับ Token Linked List จาก Lexer
+- สร้าง Abstract Syntax Tree (AST) ด้วย Recursive Descent Parsing
+- จัดการ Operator Precedence: comparison → addition → multiply → primary
+
+นี่คือไฟล์ที่เกี่ยวข้อง (ห้ามแก้ไข — ใช้เป็น reference):
+
+=== lexer.h (Token types ที่ Parser ต้องจับคู่) ===
+[วางโค้ด src/lexer.h ทั้งไฟล์ที่นี่]
+
+=== parser.h (AST types ที่ต้อง implement) ===
+[วางโค้ด src/parser.h ทั้งไฟล์ที่นี่]
+
+=== parser.c (skeleton ที่ต้อง implement) ===
+[วางโค้ด src/parser.c ทั้งไฟล์ที่นี่]
+
+ช่วย implement ทุก function ใน parser.c ให้ครบตาม TODO ที่เขียนไว้
+โดยต้อง:
+1. ใช้ function signature ตรงตาม parser.h (ห้ามเปลี่ยน)
+2. Helper functions advance(), expect(), skip_newlines() เขียนไว้แล้ว
+3. Implement:
+   - ast_node_create, ast_node_add_child, ast_node_free
+   - parse_primary (INT_LIT, STRING_LIT, IDENT, parenthesized expr)
+   - parse_multiply (* /)
+   - parse_addition (+ -)
+   - parse_comparison (> < ==)
+   - parse_expression → เรียก parse_comparison
+   - parse_statement:
+     * TOKEN_SET: แยก VAR_DECL (set x as int to expr) กับ ASSIGN (set x to expr)
+     * TOKEN_SHOW: AST_PRINT
+     * TOKEN_IF: AST_IF with then/else/end
+     * TOKEN_WHILE: AST_WHILE with do/end
+   - parser_parse → entry point สร้าง PROGRAM node
+4. compile ได้ด้วย gcc -Wall -Wextra
+5. คืนเฉพาะโค้ดไฟล์ parser.c เท่านั้น
+```

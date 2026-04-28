@@ -33,7 +33,7 @@
 เปิด Terminal (Command Prompt / PowerShell / Git Bash) แล้วพิมพ์:
 
 ```bash
-git clone <url ของ repo>
+git clone https://github.com/newton1306/CPE-Lang.git
 ```
 
 > 💡 **url ของ repo** คือลิงก์ที่ Lead ส่งให้ เช่น `https://github.com/username/CPE-Lang.git`

@@ -1,4 +1,4 @@
-# 🟠 คู่มือสำหรับเพื่อนคนที่ 4 — Evaluator Developer
+# 🟠 คู่มือสำหรับ GEAR — Evaluator Developer
 
 ## 📋 งานของคุณคือ: เขียน `src/eval.c`
 
@@ -279,3 +279,63 @@ gcc -Wall -Wextra src/main.c src/lexer.c src/parser.c src/env.c src/eval.c -o bu
 ```
 
 ถ้า output ตรงกับที่คาดหวัง (ดูใน demo.cpe) → พร้อมส่ง PR! 🎉
+
+---
+
+## 🤖 ทางเลือกสุดท้าย — ใช้ AI ช่วย
+
+ถ้าทำเองไม่ไหวจริงๆ ให้ copy prompt ด้านล่างนี้ไปวางใน ChatGPT, Claude, Gemini หรือ AI ตัวไหนก็ได้:
+
+```
+ฉันกำลังทำโปรเจกต์ CPE Language Interpreter เป็นภาษา C
+งานของฉันคือเขียนไฟล์ eval.c ซึ่งเป็น AST Executor (Evaluator)
+
+หน้าที่ของ Evaluator:
+- "เดิน" (traverse) ต้นไม้ AST แบบ recursive
+- ประมวลผลแต่ละ node ตามประเภท (switch-case)
+- จัดการ scope (สร้าง/ทำลาย child environment)
+
+⚠️ จุดสำคัญ:
+เวลา assign ค่าใหม่ (set x to value) ใน child scope (เช่นใน while loop)
+ต้อง update in-place ผ่าน pointer ที่ได้จาก env_get()
+ห้ามใช้ env_set() ใน child scope! จะทำให้เกิด variable shadowing
+และ while loop ไม่จบ
+
+นี่คือไฟล์ที่เกี่ยวข้อง (ห้ามแก้ไข — ใช้เป็น reference):
+
+=== eval.h (API ที่ต้อง implement) ===
+[วางโค้ด src/eval.h ทั้งไฟล์ที่นี่]
+
+=== parser.h (AST node types + struct) ===
+[วางโค้ด src/parser.h ทั้งไฟล์ที่นี่]
+
+=== env.h (Value + Environment API) ===
+[วางโค้ด src/env.h ทั้งไฟล์ที่นี่]
+
+=== eval.c (skeleton ที่ต้อง implement) ===
+[วางโค้ด src/eval.c ทั้งไฟล์ที่นี่]
+
+=== main.c (ดูว่า eval ถูกเรียกใช้ยังไง) ===
+[วางโค้ด src/main.c ทั้งไฟล์ที่นี่]
+
+ช่วย implement ทุก function ใน eval.c ให้ครบตาม TODO ที่เขียนไว้
+โดยต้อง:
+1. ใช้ function signature ตรงตาม eval.h (ห้ามเปลี่ยน)
+2. Implement eval() — switch ตาม node->type:
+   - AST_INT_LIT → atoi(node->value) → value_int()
+   - AST_STRING_LIT → value_string(node->value)
+   - AST_IDENT → env_get → return copy ของ value
+   - AST_BINARY_OP → eval both children → calculate
+     (+, -, *, /, >, <, ==) + string concatenation ด้วย +
+   - AST_VAR_DECL → eval init → env_set() ← ใช้ env_set ได้ตรงนี้
+   - AST_ASSIGN → env_get() pointer → update in-place
+     ⚠️ ห้ามใช้ env_set() ตรงนี้!
+   - AST_IF → eval condition → truthy? then-block : else-block
+   - AST_WHILE → loop: eval condition → truthy? body : break
+   - AST_PRINT → eval expression → printf
+   - AST_PROGRAM/AST_BLOCK → eval ทุก children
+3. Implement eval_block() — สร้าง child env → eval → destroy
+4. compile ได้ด้วย gcc -Wall -Wextra
+5. รันโปรแกรม demo.cpe ได้ output ถูกต้อง
+6. คืนเฉพาะโค้ดไฟล์ eval.c เท่านั้น
+```
