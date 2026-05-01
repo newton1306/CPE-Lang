@@ -28,3 +28,49 @@
 //
 //  TODO: เขียน test case ตามที่ระบุด้านบน
 // =============================================================================
+
+//ประกาศตัวแปร int 20 ตัว (a ถึง t) เพื่อทดสอบ Hash Table ความจุ 64 buckets
+set a as int to 1
+set b as int to 2
+set c as int to 3
+set d as int to 4
+set e as int to 5
+set f as int to 6
+set g as int to 7
+set h as int to 8
+set i as int to 9
+set j as int to 10
+set k as int to 11
+set l as int to 12
+set m as int to 13
+set n as int to 14
+set o as int to 15
+set p as int to 16
+set q as int to 17
+set r as int to 18
+set s as int to 19
+set t as int to 20
+
+//ทดสอบประกาศตัวแปร string ปะปนเพื่อเช็คเรื่องการชน (Collision) และประเภทข้อมูล
+set prefix as string to "Total"
+set space as string to " "
+set suffix as string to "is correct"
+
+//ทดสอบอ่านค่ากลับมาเป็นรายตัว (ต้องได้ค่าที่ถูกต้อง ไม่สลับกัน)
+show a //1
+show j //10
+show t //20
+
+//ทดสอบการคำนวณรวมค่าตัวแปร (แบ่ง 2 กลุ่มเพื่อไม่ให้ expression ยาวเกินไป)
+set sum1 as int to a+b+c+d+e+f+g+h+i+j
+set sum2 as int to k+l+m+n+o+p+q+r+s+t
+
+//นำผลรวมมาบวกกัน (1-10 = 55, 11-20 = 155, รวมเป็น 210)
+set total as int to sum1+sum2
+show total //210
+
+//ทดสอบใช้งานตัวแปร string เพื่อให้แน่ใจว่าอ่านค่าไม่ผิดพลาด
+set result_msg as string to prefix + space + suffix
+show result_msg //Total is correct
+
+//Output : 1 10 20 210 Total is correct
