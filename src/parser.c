@@ -261,6 +261,8 @@ static ASTNode *parse_statement(void)
         
         ast_node_add_child(node, parse_expression());
         
+        expect(TOKEN_THEN); 
+        
         ASTNode *then_block = ast_node_create(AST_BLOCK);
         skip_newlines();
         while (current_token && current_token->type != TOKEN_END && current_token->type != TOKEN_ELSE) {
@@ -289,6 +291,8 @@ static ASTNode *parse_statement(void)
         ASTNode *node = ast_node_create(AST_WHILE);
         
         ast_node_add_child(node, parse_expression());
+        
+        expect(TOKEN_DO); 
         
         ASTNode *body_block = ast_node_create(AST_BLOCK);
         skip_newlines();
@@ -325,3 +329,6 @@ ASTNode *parser_parse(TokenList *tokens)
     
     return program;
 }
+
+git add .
+git commit -m "feat(parser): add recursive descent for if-else"
