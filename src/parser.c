@@ -182,7 +182,7 @@ static ASTNode *parse_comparison(void)
     ASTNode *left = parse_addition();
     while (current_token && (current_token->type == TOKEN_GT || 
                              current_token->type == TOKEN_LT || 
-                             current_token->type == TOKEN_EQEQ)) {
+                             current_token->type == TOKEN_EQ)) {
         ASTNode *op_node = ast_node_create(AST_BINARY_OP);
         if (current_token->value) op_node->op = strdup(current_token->value);
         advance();
