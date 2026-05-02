@@ -1,18 +1,14 @@
 /*
  * =============================================================================
- *  CPE Language v1.0 - Parser (AST Builder)
+ * CPE Language v1.0 - Parser (AST Builder)
  * =============================================================================
- *  ผู้รับผิดชอบ: IKKIW
- *  Branch: feature/parser
+ * ผู้รับผิดชอบ: IKKIW
+ * Branch: feature/parser
  *
- *  หน้าที่:
- *  - รับ Token Linked List จาก Lexer
- *  - สร้าง Abstract Syntax Tree (AST) ด้วย Recursive Descent Parsing
- *  - จัดการ operator precedence (comparison → addition → multiply → primary)
- *
- *  ดู parser.h สำหรับ ASTNodeType enum และ ASTNode struct
- *  ดู lexer.h สำหรับ TokenType ที่ต้องจับคู่
- *  ดู ARCHITECTURE.md สำหรับ Grammar และ AST ตัวอย่าง
+ * หน้าที่:
+ * - รับ Token Linked List จาก Lexer
+ * - สร้าง Abstract Syntax Tree (AST) ด้วย Recursive Descent Parsing
+ * - จัดการ operator precedence (comparison → addition → multiply → primary)
  * =============================================================================
  */
 
@@ -23,13 +19,12 @@
 #include "parser.h"
 
 /* ---------------------------------------------------------------------------
- *  Parser State
- *  เก็บ pointer ไปยัง token ปัจจุบันที่กำลังอ่าน
+ * Parser State
  * ---------------------------------------------------------------------------*/
 static Token *current_token = NULL;
 
 /* ---------------------------------------------------------------------------
- *  Helper: advance — เลื่อน current_token ไปยัง token ถัดไป
+ * Helper Functions
  * ---------------------------------------------------------------------------*/
 static void advance(void)
 {
@@ -37,24 +32,17 @@ static void advance(void)
         current_token = current_token->next;
 }
 
-/* ---------------------------------------------------------------------------
- *  Helper: expect — ตรวจสอบว่า token ปัจจุบันเป็นประเภทที่คาดหวัง
- *  ถ้าไม่ตรง → แจ้ง error แล้วหยุดโปรแกรม
- * ---------------------------------------------------------------------------*/
 static void expect(TokenType type)
 {
     if (!current_token || current_token->type != type) {
         fprintf(stderr, "[CPE] Parse error at line %d: expected token type %d, got %d\n",
                 current_token ? current_token->line : 0, type,
-                current_token ? current_token->type : -1);
+                current_token ? current_token->type : TOKEN_EOF);
         exit(1);
     }
     advance();
 }
 
-/* ---------------------------------------------------------------------------
- *  Helper: skip_newlines — ข้าม TOKEN_NEWLINE ที่ติดกัน
- * ---------------------------------------------------------------------------*/
 static void skip_newlines(void)
 {
     while (current_token && current_token->type == TOKEN_NEWLINE)
@@ -62,143 +50,282 @@ static void skip_newlines(void)
 }
 
 /* ===========================================================================
- *  TODO 1: ast_node_create
- *  สร้าง ASTNode ใหม่
- *  - malloc + memset ทั้ง struct เป็น 0
- *  - ตั้ง type ตามที่ส่งมา
+ * TODO 1: ast_node_create
  * ===========================================================================*/
 ASTNode *ast_node_create(ASTNodeType type)
 {
-    /* TODO: implement */
-    (void)type;
-    return NULL;
+    ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
+    if (!node) {
+        fprintf(stderr, "[CPE] Memory allocation failed!\n");
+        exit(1);
+    }
+    memset(node, 0, sizeof(ASTNode));
+    node->type = type;
+    return node;
 }
 
 /* ===========================================================================
- *  TODO 2: ast_node_add_child
- *  เพิ่ม child เข้าไปใน parent->children[]
- *  - ตรวจสอบ child_count < AST_MAX_CHILDREN
- *  - parent->children[parent->child_count++] = child
+ * TODO 2: ast_node_add_child
  * ===========================================================================*/
 void ast_node_add_child(ASTNode *parent, ASTNode *child)
 {
-    /* TODO: implement */
-    (void)parent; (void)child;
+    if (!parent || !child) return;
+    if (parent->child_count < AST_MAX_CHILDREN) {
+        parent->children[parent->child_count++] = child;
+    }
 }
 
 /* ===========================================================================
- *  TODO 3: ast_node_free
- *  ทำลาย AST tree ทั้งหมดแบบ recursive
- *  - free children ก่อน (recursive)
- *  - free value, name, op, var_type (ถ้ามี)
- *  - free ตัว node
+ * TODO 3: ast_node_free
  * ===========================================================================*/
 void ast_node_free(ASTNode *node)
 {
-    /* TODO: implement */
-    (void)node;
+    if (!node) return;
+    for (int i = 0; i < node->child_count; i++) {
+        ast_node_free(node->children[i]);
+    }
+    if (node->value) free(node->value);
+    if (node->name) free(node->name);
+    if (node->op) free(node->op);
+    if (node->var_type) free(node->var_type);
+    free(node);
 }
 
 /* ===========================================================================
- *  TODO 4: Forward declarations สำหรับ Recursive Descent
- *
- *  ประกาศฟังก์ชัน parse ล่วงหน้า เพราะแต่ละฟังก์ชันเรียกกันเป็นวงกลม:
- *
- *  static ASTNode *parse_statement(void);
- *  static ASTNode *parse_expression(void);   → เรียก parse_comparison
- *  static ASTNode *parse_comparison(void);   → เรียก parse_addition
- *  static ASTNode *parse_addition(void);     → เรียก parse_multiply
- *  static ASTNode *parse_multiply(void);     → เรียก parse_primary
- *  static ASTNode *parse_primary(void);      → INT_LIT, STRING_LIT, IDENT, (expr)
+ * TODO 4: Forward declarations
  * ===========================================================================*/
-
-/* TODO: ประกาศ forward declarations ที่นี่ */
+static ASTNode *parse_statement(void);
+static ASTNode *parse_expression(void);
+static ASTNode *parse_comparison(void);
+static ASTNode *parse_addition(void);
+static ASTNode *parse_multiply(void);
+static ASTNode *parse_primary(void);
 
 /* ===========================================================================
- *  TODO 5: parse_primary
- *  จัดการ token ที่เป็น "ค่า" พื้นฐาน:
- *  - TOKEN_INT_LIT    → AST_INT_LIT   (เก็บ value)
- *  - TOKEN_STRING_LIT → AST_STRING_LIT (เก็บ value)
- *  - TOKEN_IDENT      → AST_IDENT     (เก็บ name)
- *  - TOKEN_LPAREN     → parse_expression() → expect TOKEN_RPAREN
+ * TODO 5: parse_primary
  * ===========================================================================*/
+static ASTNode *parse_primary(void)
+{
+    if (!current_token) return NULL;
 
-/* TODO: implement parse_primary */
+    if (current_token->type == TOKEN_INT_LIT) {
+        ASTNode *node = ast_node_create(AST_INT_LIT);
+        if (current_token->value) node->value = strdup(current_token->value);
+        advance();
+        return node;
+    }
+    if (current_token->type == TOKEN_STRING_LIT) {
+        ASTNode *node = ast_node_create(AST_STRING_LIT);
+        if (current_token->value) node->value = strdup(current_token->value);
+        advance();
+        return node;
+    }
+    if (current_token->type == TOKEN_IDENT) {
+        ASTNode *node = ast_node_create(AST_IDENT);
+        if (current_token->value) node->name = strdup(current_token->value);
+        advance();
+        return node;
+    }
+    if (current_token->type == TOKEN_LPAREN) {
+        advance();
+        ASTNode *expr = parse_expression();
+        expect(TOKEN_RPAREN);
+        return expr;
+    }
+    
+    fprintf(stderr, "[CPE] Parse error line %d: unexpected '%s'\n",
+            current_token->line, current_token->value ? current_token->value : "EOF");
+    exit(1);
+}
 
 /* ===========================================================================
- *  TODO 6: parse_multiply
- *  จัดการ * และ /
- *  - เรียก parse_primary() ก่อน
- *  - ถ้าเจอ * หรือ / → สร้าง AST_BINARY_OP → เรียก parse_primary() อีกครั้ง
- *  - ทำวนจน operators หมด
+ * TODO 6: parse_multiply
  * ===========================================================================*/
-
-/* TODO: implement parse_multiply */
+static ASTNode *parse_multiply(void)
+{
+    ASTNode *left = parse_primary();
+    while (current_token && (current_token->type == TOKEN_STAR || current_token->type == TOKEN_SLASH)) {
+        ASTNode *op_node = ast_node_create(AST_BINARY_OP);
+        if (current_token->value) op_node->op = strdup(current_token->value);
+        advance();
+        ASTNode *right = parse_primary();
+        ast_node_add_child(op_node, left);
+        ast_node_add_child(op_node, right);
+        left = op_node;
+    }
+    return left;
+}
 
 /* ===========================================================================
- *  TODO 7: parse_addition
- *  จัดการ + และ -
- *  - เรียก parse_multiply() ก่อน
- *  - ถ้าเจอ + หรือ - → สร้าง AST_BINARY_OP
+ * TODO 7: parse_addition
  * ===========================================================================*/
-
-/* TODO: implement parse_addition */
+static ASTNode *parse_addition(void)
+{
+    ASTNode *left = parse_multiply();
+    while (current_token && (current_token->type == TOKEN_PLUS || current_token->type == TOKEN_MINUS)) {
+        ASTNode *op_node = ast_node_create(AST_BINARY_OP);
+        if (current_token->value) op_node->op = strdup(current_token->value);
+        advance();
+        ASTNode *right = parse_multiply();
+        ast_node_add_child(op_node, left);
+        ast_node_add_child(op_node, right);
+        left = op_node;
+    }
+    return left;
+}
 
 /* ===========================================================================
- *  TODO 8: parse_comparison
- *  จัดการ >, <, ==
- *  - เรียก parse_addition() ก่อน
- *  - ถ้าเจอ > หรือ < หรือ == → สร้าง AST_BINARY_OP
+ * TODO 8: parse_comparison
  * ===========================================================================*/
-
-/* TODO: implement parse_comparison */
+static ASTNode *parse_comparison(void)
+{
+    ASTNode *left = parse_addition();
+    while (current_token && (current_token->type == TOKEN_GT || 
+                             current_token->type == TOKEN_LT || 
+                             current_token->type == TOKEN_EQEQ)) {
+        ASTNode *op_node = ast_node_create(AST_BINARY_OP);
+        if (current_token->value) op_node->op = strdup(current_token->value);
+        advance();
+        ASTNode *right = parse_addition();
+        ast_node_add_child(op_node, left);
+        ast_node_add_child(op_node, right);
+        left = op_node;
+    }
+    return left;
+}
 
 /* ===========================================================================
- *  TODO 9: parse_expression
- *  Entry point สำหรับ expression → เรียก parse_comparison()
+ * TODO 9: parse_expression
  * ===========================================================================*/
-
-/* TODO: implement parse_expression */
+static ASTNode *parse_expression(void)
+{
+    return parse_comparison();
+}
 
 /* ===========================================================================
- *  TODO 10: parse_statement
- *  จัดการแต่ละ statement:
- *
- *  TOKEN_SET → ดู token ถัดถัดไป:
- *    - ถ้าเจอ TOKEN_AS → VAR_DECL: set <name> as <type> to <expr>
- *      - children[0] = initial value expression
- *    - ถ้าไม่ → ASSIGN: set <name> to <expr>
- *      - children[0] = new value expression
- *
- *  TOKEN_SHOW → PRINT:
- *    - children[0] = expression ที่จะ print
- *
- *  TOKEN_IF → IF:
- *    - children[0] = condition expression
- *    - children[1] = then-block (AST_BLOCK)
- *    - children[2] = else-block (AST_BLOCK, ถ้ามี)
- *    - parse จนเจอ TOKEN_END
- *
- *  TOKEN_WHILE → WHILE:
- *    - children[0] = condition expression
- *    - children[1] = body block (AST_BLOCK)
- *    - parse จนเจอ TOKEN_END
+ * TODO 10: parse_statement
  * ===========================================================================*/
+static ASTNode *parse_statement(void)
+{
+    if (!current_token) return NULL;
 
-/* TODO: implement parse_statement */
+    if (current_token->type == TOKEN_SET) {
+        advance(); 
+        
+        if (current_token->type != TOKEN_IDENT) {
+            fprintf(stderr, "[CPE] Parse error line %d: expected identifier after 'set'\n", current_token->line);
+            exit(1);
+        }
+        
+        char *var_name = strdup(current_token->value);
+        advance(); 
+        
+        if (current_token->type == TOKEN_AS) {
+            advance(); 
+            ASTNode *decl_node = ast_node_create(AST_VAR_DECL);
+            decl_node->name = var_name;
+            
+            if (current_token->type == TOKEN_IDENT) {
+                decl_node->var_type = strdup(current_token->value);
+                advance();
+            }
+            
+            expect(TOKEN_TO);
+            ast_node_add_child(decl_node, parse_expression());
+            return decl_node;
+            
+        } else if (current_token->type == TOKEN_TO) {
+            advance(); 
+            ASTNode *assign_node = ast_node_create(AST_ASSIGN);
+            assign_node->name = var_name;
+            ast_node_add_child(assign_node, parse_expression());
+            return assign_node;
+            
+        } else {
+            fprintf(stderr, "[CPE] Parse error line %d: expected 'as' or 'to'\n", current_token->line);
+            free(var_name);
+            exit(1);
+        }
+    }
+    
+    if (current_token->type == TOKEN_SHOW) {
+        advance();
+        ASTNode *node = ast_node_create(AST_PRINT);
+        ast_node_add_child(node, parse_expression());
+        return node;
+    }
+    
+    if (current_token->type == TOKEN_IF) {
+        advance();
+        ASTNode *node = ast_node_create(AST_IF);
+        
+        ast_node_add_child(node, parse_expression());
+        
+        expect(TOKEN_THEN); 
+        
+        ASTNode *then_block = ast_node_create(AST_BLOCK);
+        skip_newlines();
+        while (current_token && current_token->type != TOKEN_END && current_token->type != TOKEN_ELSE) {
+            ast_node_add_child(then_block, parse_statement());
+            skip_newlines();
+        }
+        ast_node_add_child(node, then_block);
+        
+        if (current_token && current_token->type == TOKEN_ELSE) {
+            advance();
+            ASTNode *else_block = ast_node_create(AST_BLOCK);
+            skip_newlines();
+            while (current_token && current_token->type != TOKEN_END) {
+                ast_node_add_child(else_block, parse_statement());
+                skip_newlines();
+            }
+            ast_node_add_child(node, else_block);
+        }
+        
+        expect(TOKEN_END);
+        return node;
+    }
+    
+    if (current_token->type == TOKEN_WHILE) {
+        advance();
+        ASTNode *node = ast_node_create(AST_WHILE);
+        
+        ast_node_add_child(node, parse_expression());
+        
+        expect(TOKEN_DO); 
+        
+        ASTNode *body_block = ast_node_create(AST_BLOCK);
+        skip_newlines();
+        while (current_token && current_token->type != TOKEN_END) {
+            ast_node_add_child(body_block, parse_statement());
+            skip_newlines();
+        }
+        ast_node_add_child(node, body_block);
+        
+        expect(TOKEN_END);
+        return node;
+    }
+    
+    fprintf(stderr, "[CPE] Parse error line %d: unexpected statement token '%s'\n", 
+            current_token->line, current_token->value ? current_token->value : "");
+    exit(1);
+}
 
 /* ===========================================================================
- *  TODO 11: parser_parse (ฟังก์ชันหลัก)
- *
- *  1. ตั้ง current_token = tokens->head
- *  2. สร้าง PROGRAM node (root ของ AST)
- *  3. วนลูป skip_newlines → parse_statement → add_child
- *     จนกว่า current_token->type == TOKEN_EOF
- *  4. คืน PROGRAM node
+ * TODO 11: parser_parse
  * ===========================================================================*/
 ASTNode *parser_parse(TokenList *tokens)
 {
-    /* TODO: implement */
-    (void)tokens;
-    return ast_node_create(AST_PROGRAM);
+    if (!tokens || !tokens->head) return NULL;
+    
+    current_token = tokens->head;
+    ASTNode *program = ast_node_create(AST_PROGRAM);
+    
+    skip_newlines();
+    while (current_token && current_token->type != TOKEN_EOF) {
+        ast_node_add_child(program, parse_statement());
+        skip_newlines();
+    }
+    
+    return program;
 }
