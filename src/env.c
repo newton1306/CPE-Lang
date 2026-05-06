@@ -20,6 +20,16 @@
 #include <string.h>
 #include "env.h"
 
+static char *my_strdup(const char *s) {
+    if (s == NULL) return NULL;
+    size_t len = strlen(s) + 1;
+    char *dup = (char *)malloc(len);
+    if (dup != NULL) {
+        strcpy(dup, s);
+    }
+    return dup;
+}
+
 /* ===========================================================================
  *  TODO 1: hash function (djb2)
  *
@@ -33,9 +43,12 @@
  * ===========================================================================*/
 static unsigned int hash(const char *name)
 {
-    /* TODO: implement djb2 hash */
-    (void)name;
-    return 0;
+    unsigned long hash_val = 5381;
+    int c;
+    while ((c = (unsigned char)*name++) != 0) {
+        hash_val = ((hash_val << 5) + hash_val) + c; /* hash_val * 33 + c */
+    }
+    return (unsigned int)(hash_val % ENV_TABLE_SIZE);
 }
 
 /* ===========================================================================
@@ -66,7 +79,7 @@ Value value_string(const char *s)
     Value val;
     memset(&val, 0, sizeof(val));
     val.type = VAL_STRING;
-    val.data.str_val = strdup(s);
+    val.data.str_val = my_strdup(s);
     return val;
 }
 
@@ -78,8 +91,10 @@ Value value_string(const char *s)
  * ===========================================================================*/
 void value_free(Value *val)
 {
-    /* TODO: implement */
-    (void)val;
+    if (val != NULL && val->type == VAL_STRING && val->data.str_val != NULL) {
+        free(val->data.str_val);
+        val->data.str_val = NULL;
+    }
 }
 
 /* ===========================================================================
@@ -91,9 +106,15 @@ void value_free(Value *val)
  * ===========================================================================*/
 Env *env_create(Env *parent)
 {
-    /* TODO: implement */
-    (void)parent;
-    return NULL;
+    Env *env = (Env *)malloc(sizeof(Env));
+    if (env == NULL) return NULL;
+    
+    for (int i = 0; i < ENV_TABLE_SIZE; i++) {
+        env->buckets[i] = NULL;
+    }
+
+    env->parent = parent;    
+    return env;
 }
 
 /* ===========================================================================
@@ -109,8 +130,23 @@ Env *env_create(Env *parent)
  * ===========================================================================*/
 void env_destroy(Env *env)
 {
-    /* TODO: implement */
-    (void)env;
+    if (env == NULL) return;
+    
+    for (int i = 0; i < ENV_TABLE_SIZE; i++) {
+        EnvEntry *entry = env->buckets[i];
+        while (entry != NULL) {
+            EnvEntry *next = entry->next;
+            
+            if (entry->name != NULL) {
+                free(entry->name);             
+            }
+            value_free(&entry->value);     
+            free(entry);                  
+            
+            entry = next;
+        }
+    }
+    free(env);
 }
 
 /* ===========================================================================
@@ -130,8 +166,30 @@ void env_destroy(Env *env)
  * ===========================================================================*/
 void env_set(Env *env, const char *name, Value value)
 {
-    /* TODO: implement */
-    (void)env; (void)name; (void)value;
+    if (env == NULL || name == NULL) return;
+
+    unsigned int index = hash(name);
+    EnvEntry *entry = env->buckets[index];
+    
+    while (entry != NULL) {
+        if (strcmp(entry->name, name) == 0) {
+            value_free(&entry->value);  
+            entry->value = value;      
+            return;
+        }
+        entry = entry->next;
+    }
+    
+    
+    EnvEntry *new_entry = (EnvEntry *)malloc(sizeof(EnvEntry));
+    if (new_entry == NULL) return; 
+    
+    new_entry->name = my_strdup(name); 
+    new_entry->value = value;
+    
+   
+    new_entry->next = env->buckets[index];
+    env->buckets[index] = new_entry;
 }
 
 /* ===========================================================================
@@ -150,7 +208,24 @@ void env_set(Env *env, const char *name, Value value)
  * ===========================================================================*/
 Value *env_get(Env *env, const char *name)
 {
-    /* TODO: implement */
-    (void)env; (void)name;
+   if (env == NULL || name == NULL) return NULL;
+
+    unsigned int index = hash(name);
+    EnvEntry *entry = env->buckets[index];
+
+   
+    while (entry != NULL) {
+        if (strcmp(entry->name, name) == 0) {
+            return &entry->value;   
+        }
+        entry = entry->next;
+    }
+
+    
+    if (env->parent != NULL) {
+        return env_get(env->parent, name);
+    }
+
     return NULL;
 }
+
