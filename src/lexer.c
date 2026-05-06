@@ -69,8 +69,7 @@ TokenList *token_list_create(void) {
  *
  *  Time Complexity: O(1) เพราะมี tail pointer
  * ---------------------------------------------------------------------------*/
-void token_list_append(TokenList *list, TokenType type, const char *value,
-                       int line) {
+void token_list_append(TokenList *list, TokenType type, const char *value, int line) {
   Token *tok = token_create(type, value, line);
 
   if (list->tail == NULL) {
@@ -152,128 +151,78 @@ static TokenType lookup_keyword(const char *word) {
  * ---------------------------------------------------------------------------*/
 TokenList *lexer_tokenize(const char *source) {
   TokenList *list = token_list_create();
-  int pos = 0;  /* ตำแหน่งปัจจุบันใน source string */
-  int line = 1; /* หมายเลขบรรทัดปัจจุบัน          */
-  int len = (int)strlen(source);
-
-  while (pos < len) {
-    char c = source[pos];
-
-    /* --- ข้ามช่องว่างและ tab (แต่ไม่ข้าม newline) --- */
-    if (c == ' ' || c == '\t' || c == '\r') {
-      pos++;
-      continue;
+  const char *pos = source;
+  int line = 1;
+  while (*pos != '\0'){
+    if (*pos == ' ' || *pos == '\t' || *pos == '\r'){
+        pos++;
+        continue;
     }
-
-    /* --- Newline → TOKEN_NEWLINE (ตัวจบ statement) ---
-     * ไม่เพิ่ม NEWLINE ซ้ำถ้า token ก่อนหน้าเป็น NEWLINE อยู่แล้ว
-     * เพื่อให้ parser ไม่ต้องจัดการกับบรรทัดว่าง */
-    if (c == '\n') {
-      /* เพิ่ม NEWLINE เฉพาะเมื่อ token ก่อนหน้าไม่ใช่ NEWLINE */
-      if (list->tail == NULL || list->tail->type != TOKEN_NEWLINE) {
+    if (*pos == '\n'){
+      if (list->count == 0 || list->tail->type != TOKEN_NEWLINE) {
         token_list_append(list, TOKEN_NEWLINE, "\\n", line);
       }
-      line++;
       pos++;
+      line++;
+      continue;
+    }
+    if (*pos == '/' && *(pos + 1) == '/') {
+        while (*pos != '\n' && *pos != '\0') {
+            pos++;
+        }
+        continue;
+    }
+
+    if (isdigit(*pos)){
+      const char *start = pos;
+      while (isdigit(*pos)) pos++;
+      int len = pos - start;
+      char *num = (char *)malloc(len + 1);
+      strncpy(num, start, len);
+      num[len] = '\0';
+      token_list_append(list, TOKEN_INT_LIT, num, line);
+      free(num);
       continue;
     }
 
-    /* --- ข้าม comment: // จนจบบรรทัด --- */
-    if (c == '/' && pos + 1 < len && source[pos + 1] == '/') {
-      pos += 2;
-      while (pos < len && source[pos] != '\n') {
+    if (*pos == '"') {
+    pos++;
+    const char *start = pos;
+    
+    while (*pos != '"' && *pos != '\0') pos++;
+    
+    /* Safely catch the end-of-file trap */
+    if (*pos == '\0') {
+        fprintf(stderr, "[Lexer] Error: unterminated string at line %d\n", line);
+        exit(1);
+    }
+    
+    int len = pos - start;
+    char *text = (char *)malloc(len + 1);
+    strncpy(text, start, len);
+    text[len] = '\0';
+    token_list_append(list, TOKEN_STRING_LIT, text, line);
+    free(text);
+    
+    /* We know for a fact *pos is '"' here, so just step over it */
+    pos++;
+    continue;
+    }
+    if (isalpha(*pos) || *pos == '_'){
+      const char *start = pos;
+      while (isalnum(*pos) || *pos == '_'){
         pos++;
       }
-      continue; /* ไม่ต้อง pos++ เพราะ \n จะถูกจัดการรอบถัดไป */
-    }
-
-    /* -----------------------------------------------------------
-     *  ตัวเลข (Integer Literal)
-     *  อ่านตัวเลขติดต่อกันทั้งหมดเก็บในบัฟเฟอร์
-     * -----------------------------------------------------------*/
-    if (isdigit(c)) {
-      char buf[64];
-      int bi = 0;
-      while (pos < len && isdigit(source[pos]) && bi < 63) {
-        buf[bi++] = source[pos++];
-      }
-      buf[bi] = '\0';
-      token_list_append(list, TOKEN_INT_LIT, buf, line);
+      int len = pos - start;
+      char *text = (char *)malloc(len + 1);
+      strncpy(text, start, len);
+      text[len] = '\0';
+      token_list_append(list, lookup_keyword(text), text, line);
+      free(text);
       continue;
     }
 
-    /* -----------------------------------------------------------
-     *  ตัวอักษร (Identifier หรือ Keyword)
-     *  อ่านตัวอักษร/ตัวเลข/_ ติดต่อกัน
-     *  แล้วเทียบกับตาราง keyword
-     * -----------------------------------------------------------*/
-    if (isalpha(c) || c == '_') {
-      char buf[256];
-      int bi = 0;
-      while (pos < len && (isalnum(source[pos]) || source[pos] == '_') &&
-             bi < 255) {
-        buf[bi++] = source[pos++];
-      }
-      buf[bi] = '\0';
-
-      TokenType kw = lookup_keyword(buf);
-      token_list_append(list, kw, buf, line);
-      continue;
-    }
-
-    /* -----------------------------------------------------------
-     *  String Literal: "..."
-     *  อ่านทุกตัวอักษรระหว่างเครื่องหมาย "
-     *  รองรับ escape sequence พื้นฐาน: \n, \t, \\, \"
-     * -----------------------------------------------------------*/
-    if (c == '"') {
-      pos++; /* ข้าม " เปิด */
-      char buf[1024];
-      int bi = 0;
-      while (pos < len && source[pos] != '"' && bi < 1023) {
-        if (source[pos] == '\\' && pos + 1 < len) {
-          /* Escape sequences */
-          pos++;
-          switch (source[pos]) {
-          case 'n':
-            buf[bi++] = '\n';
-            break;
-          case 't':
-            buf[bi++] = '\t';
-            break;
-          case '\\':
-            buf[bi++] = '\\';
-            break;
-          case '"':
-            buf[bi++] = '"';
-            break;
-          default:
-            buf[bi++] = source[pos];
-            break;
-          }
-          pos++;
-        } else {
-          buf[bi++] = source[pos++];
-        }
-      }
-      if (pos < len && source[pos] == '"') {
-        pos++; /* ข้าม " ปิด */
-      } else {
-        fprintf(stderr, "[Lexer] Error: unterminated string at line %d\n",
-                line);
-        exit(1);
-      }
-      buf[bi] = '\0';
-      token_list_append(list, TOKEN_STRING_LIT, buf, line);
-      continue;
-    }
-
-    /* -----------------------------------------------------------
-     *  Operators & Delimiters (ตัวดำเนินการและตัวคั่น)
-     *  หมายเหตุ: ไม่มี = (assign), ;, {, } ในภาษา CPE แล้ว
-     *  มีแค่ == (เปรียบเทียบ) เท่านั้น
-     * -----------------------------------------------------------*/
-    switch (c) {
+    switch (*pos) {
     case '+':
       token_list_append(list, TOKEN_PLUS, "+", line);
       pos++;
@@ -307,8 +256,8 @@ TokenList *lexer_tokenize(const char *source) {
       pos++;
       break;
     case '=':
-      /* ตรวจสอบว่าเป็น == (เท่ากับ) — ไม่มี = เดี่ยวในภาษา CPE */
-      if (pos + 1 < len && source[pos + 1] == '=') {
+      
+      if (*(pos+1) == '=') {
         token_list_append(list, TOKEN_EQ, "==", line);
         pos += 2;
       } else {
@@ -322,12 +271,10 @@ TokenList *lexer_tokenize(const char *source) {
 
     default:
       fprintf(stderr, "[Lexer] Error: unexpected character '%c' at line %d\n",
-              c, line);
+              *pos, line);
       exit(1);
     }
   }
-
-  /* เพิ่ม EOF token ที่ท้ายสุด เป็นสัญญาณบอก parser ว่าจบแล้ว */
   token_list_append(list, TOKEN_EOF, "EOF", line);
   return list;
 }
