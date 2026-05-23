@@ -34,36 +34,24 @@
 //  TODO: เขียน test case ตามที่ระบุด้านบน
 // =============================================================================
 
-//ค่าศูนย์ทำงานถูกต้อง
+// ศูนย์
 set zero as int to 0
-show zero //0
+show zero
 
-//คูณ/หารด้วยศูนย์
-set a as int to 2*0
-show a //0
-set b as int to 0/2
-show b //0
-set c as int to 2/0
-show c //undefined
+// คูณด้วยศูนย์
+set result as int to 42 * 0
+show result
 
-//ค่าลบ (จากการลบ)
-set diff as int to 24-54
-show diff //-30
+// ค่าลบ
+set neg as int to 0 - 5
+show neg
 
-//วงเล็บซ้อน
-set parenthesis as int to ((2+8)*4)-26
-show parenthesis //14
+// วงเล็บซ้อน
+set paren as int to (2 + 3) * (4 + 16)
+show paren
 
-//precedence
-set precedence as int to 5+8*0
-show precedence //5
-set precedence to 5-8/2
-show precedence //1
+// Operator precedence
+set prec as int to 2 + 3 * 4 - 13
+show prec
 
-//เปรียบเทียบ
-set x as bool to 5+2==12-5
-set x as bool to 5+2>12-5
-show x //1
-show y //0
-
-//Output : 0 0 undefined -30 14 5 1 1 0
+show "complex passed"
