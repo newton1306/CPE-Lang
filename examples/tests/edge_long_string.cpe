@@ -26,3 +26,28 @@
 //
 //  TODO: เขียน test case ตามที่ระบุด้านบน
 // =============================================================================
+
+//เริ่มต้นตัวแปร
+set s as string to ""
+set pattern as string to "abc"
+set i as int to 0
+
+//ทดสอบการต่อ string ใน loop 20 รอบ
+while i < 20 do
+    set s to s + pattern
+    set i to i + 1
+end
+show s //abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc
+
+//ทดสอบต่อ string variable กับ string literal
+set final as string to "Result: " + s
+show final //Result: abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc
+
+//ตรวจสอบจำนวนรอบและความถูกต้อง
+if i == 20 then
+    show "Success"
+else
+    show "Failed"
+end
+
+//Output : abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc Result: abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc Success
